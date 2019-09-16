@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:task="http://www.springframework.org/schema/task"
+       xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd http://www.springframework.org/schema/data/jpa https://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
+    <bean id="tasks" class="com.example.demo.component.Tasks"/>
+
+    <bean id="customErrorHandler" class="com.example.demo.component.CustomErrorHandler"/>
+
+    <bean id="datasource" class="org.springframework.jdbc.datasource.DriverManagerDataSource"/>
+
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="dataSource" value="datasource"/>
+        <property name="packagesToScan" value="com.example.demo.domain"/>
+    </bean>
+
+
+    <bean id="scheduler" class="org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler">
+        <property name="poolSize" value="3"/>
+<!--        <property name="errorHandler">
+            <bean class="com.example.demo.component.CustomErrorHandler"/>
+        </property>-->
+    </bean>
+    <task:scheduled-tasks scheduler="scheduler">
+        <task:scheduled ref="tasks" method="execute" initial-delay="5000" fixed-delay="5000"/>
+    </task:scheduled-tasks>
+</beans>
